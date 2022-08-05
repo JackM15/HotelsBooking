@@ -10,13 +10,17 @@ namespace HotelsBooking.Api.Controllers
     [Route("api/[controller]")]
     public class HotelsController : Controller
     {
-        public HotelsController()
-        { }
+        private readonly DataSource _dataSource;
+
+        public HotelsController(DataSource dataSource)
+        {
+            this._dataSource = dataSource;
+        }
 
         [HttpGet]
         public IActionResult GetAllHotels()
         {
-            var hotels = GetHotels();
+            var hotels = _dataSource.Hotels;
             return Ok(hotels);
         }
 
@@ -24,7 +28,7 @@ namespace HotelsBooking.Api.Controllers
         [Route("{id}")]
         public IActionResult GetHotelById(int id)
         {
-            var hotels = GetHotels();
+            var hotels = _dataSource.Hotels;
             var hotel = hotels.FirstOrDefault(hotel => hotel.HotelId == id);
 
             if (hotel == null)
@@ -38,7 +42,7 @@ namespace HotelsBooking.Api.Controllers
         [HttpPost]
         public IActionResult CreateHotel([FromBody] Hotel hotel)
         {
-            var hotels = GetHotels();
+            var hotels = _dataSource.Hotels;
             hotels.Add(hotel);
             return CreatedAtAction(nameof(GetHotelById), new {id = hotel.HotelId}, hotel);
         }
@@ -47,7 +51,7 @@ namespace HotelsBooking.Api.Controllers
         [Route("{id}")]
         public IActionResult UpdateHotel([FromBody] Hotel updated, int id)
         {
-            var hotels = GetHotels();
+            var hotels = _dataSource.Hotels;
             var old = hotels.FirstOrDefault(h => h.HotelId == id);
 
             if (old == null)
@@ -64,7 +68,7 @@ namespace HotelsBooking.Api.Controllers
         [Route("{id}")]
         public IActionResult DeleteHotel(int id)
         {
-            var hotels = GetHotels();
+            var hotels = _dataSource.Hotels;
             var toDelete = hotels.FirstOrDefault(h => h.HotelId == id);
 
             if (toDelete == null)
@@ -77,32 +81,5 @@ namespace HotelsBooking.Api.Controllers
             return NoContent();
         }
 
-        // Temp Data
-        private List<Hotel> GetHotels()
-        {
-            return new List<Hotel>
-            {
-                new Hotel
-                {
-                    HotelId = 1,
-                    Name = "Nango Hotel",
-                    Stars = 3,
-                    Address = "1 Nango Road",
-                    City = "Maidstone",
-                    Country = "UK",
-                    Description = "The Nango Hotel, a place to chill with kibble on demand.",
-                },
-                new Hotel
-                {
-                    HotelId = 2,
-                    Name = "Yeggle Hotel",
-                    Stars = 1,
-                    Address = "1 Eggle Road",
-                    City = "Maidstone",
-                    Country = "UK",
-                    Description = "The Yeggle Hotel, Next to a train.",
-                }
-            };
-        }
     }
 }
