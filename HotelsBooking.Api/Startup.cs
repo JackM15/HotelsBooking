@@ -1,3 +1,5 @@
+using HotelsBooking.Api.Services;
+using HotelsBooking.Api.Services.Abstractions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -33,6 +35,14 @@ namespace HotelsBooking.Api
             });
             //Create a single data source instance
             services.AddSingleton<DataSource>();
+            services.AddSingleton<MyFirstService>();
+
+            //Created each time it is required
+            services.AddTransient<ITransientOperation, TransientOperation>();
+            //Created each time a request is made
+            services.AddScoped<IScopedOperation, ScopedOperation>();
+            //Created first time its required and shared
+            services.AddSingleton<ISingletonOperation, SingletonOperation>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
