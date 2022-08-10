@@ -17,13 +17,11 @@ namespace HotelsBooking.Api.Controllers
     {
 
         private readonly ILogger _logger;
-        private readonly HttpContext _http;
         private readonly DataContext _ctx;
 
-        public HotelsController(ILogger<HotelsController> logger, IHttpContextAccessor httpContextAccesor, DataContext ctx)
+        public HotelsController(ILogger<HotelsController> logger, DataContext ctx)
         {
             this._logger = logger;
-            this._http = httpContextAccesor.HttpContext;
             this._ctx = ctx;
         }
 

@@ -29,7 +29,6 @@ namespace HotelsBooking.Api
             });
             //Create a single data source instance
             services.AddSingleton<DataSource>();
-            services.AddHttpContextAccessor();
             //EF Core
             var connString = Configuration.GetConnectionString("Default");
             services.AddDbContext<DataContext>(options => { options.UseSqlServer(connString);});
