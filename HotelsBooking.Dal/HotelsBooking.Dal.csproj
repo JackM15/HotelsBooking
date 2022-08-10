@@ -13,4 +13,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HotelsBooking.Domain\HotelsBooking.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
