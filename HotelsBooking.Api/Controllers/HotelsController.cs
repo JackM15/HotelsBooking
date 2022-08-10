@@ -1,4 +1,5 @@
 ﻿using HotelsBooking.Domain.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -13,16 +14,19 @@ namespace HotelsBooking.Api.Controllers
     {
 
         private readonly ILogger _logger;
+        private readonly HttpContext _http;
 
-        public HotelsController(ILogger<HotelsController> logger)
+        public HotelsController(ILogger<HotelsController> logger, IHttpContextAccessor httpContextAccesor)
         {
             this._logger = logger;
+            this._http = httpContextAccesor.HttpContext;
         }
 
         [HttpGet]
         public IActionResult GetAllHotels()
         {
-            return Ok();
+            _http.Request.Headers.TryGetValue("my-middleware-header", out var headerDate);
+            return Ok(headerDate);
         }
 
         [HttpGet]
