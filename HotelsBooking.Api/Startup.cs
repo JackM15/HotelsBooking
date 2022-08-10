@@ -1,4 +1,3 @@
-using HotelsBooking.Api.Middleware;
 using HotelsBooking.Dal;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,7 +32,7 @@ namespace HotelsBooking.Api
             services.AddHttpContextAccessor();
             //EF Core
             var connString = Configuration.GetConnectionString("Default");
-            services.AddDbContext<DataContext>(options => { options.UseSqlServer(connString); });
+            services.AddDbContext<DataContext>(options => { options.UseSqlServer(connString);});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,8 +50,6 @@ namespace HotelsBooking.Api
             app.UseRouting();
 
             app.UseAuthorization();
-
-            app.UseDateTimeHeader();
 
             app.UseEndpoints(endpoints =>
             {
