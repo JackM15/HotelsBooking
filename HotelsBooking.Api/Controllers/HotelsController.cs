@@ -40,6 +40,12 @@ namespace HotelsBooking.Api.Controllers
         public async Task<IActionResult> GetHotelById(int id)
         {
             var hotel = await _ctx.Hotels.FirstOrDefaultAsync(h => h.HotelId == id);
+
+            if(hotel == null)
+            {
+                return NotFound();
+            }
+
             //Map the hotel to a hotelgetdto
             var hotelGet = _mapper.Map<HotelGetDto>(hotel);
             return Ok(hotelGet);
@@ -84,6 +90,11 @@ namespace HotelsBooking.Api.Controllers
         public async Task<IActionResult> DeleteHotel(int id)
         {
             var hotel = await _ctx.Hotels.FirstOrDefaultAsync(h => h.HotelId == id);
+
+            if (hotel == null)
+            {
+                return NotFound();
+            }
 
             //Remove hotel in memory/context
             _ctx.Hotels.Remove(hotel);
