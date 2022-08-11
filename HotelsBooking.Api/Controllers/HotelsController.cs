@@ -4,8 +4,8 @@ using HotelsBooking.Dal;
 using HotelsBooking.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HotelsBooking.Api.Controllers
@@ -15,13 +15,11 @@ namespace HotelsBooking.Api.Controllers
     public class HotelsController : Controller
     {
 
-        private readonly ILogger _logger;
         private readonly DataContext _ctx;
         private readonly IMapper _mapper;
 
-        public HotelsController(ILogger<HotelsController> logger, DataContext ctx, IMapper mapper)
+        public HotelsController(DataContext ctx, IMapper mapper)
         {
-            this._logger = logger;
             this._ctx = ctx;
             this._mapper = mapper;
         }
@@ -105,5 +103,80 @@ namespace HotelsBooking.Api.Controllers
             return NoContent();
         }
 
+        [HttpGet]
+        [Route("{hotelId}/rooms")]
+        public async Task<IActionResult> GetAllHotelRooms(int hotelId)
+        {
+            //Get all rooms with the matching hotel ID
+            var rooms = await _ctx.Rooms.Where(r => r.HotelId == hotelId).ToListAsync();
+            //Map them to a getdto
+            var mappedRooms = _mapper.Map<List<RoomGetDto>>(rooms);
+            return Ok(mappedRooms);
+        }
+
+        [HttpGet]
+        [Route("{hotelId}/rooms/{roomId}")]
+        public async Task<IActionResult> GetHotelRoomById(int hotelId, int roomId)
+        {
+            var room = await _ctx.Rooms.FirstOrDefaultAsync(r =>  r.HotelId == hotelId &&  r.RoomId == roomId);
+            if (room == null)
+            {
+                return NotFound("Room not found.");
+            }
+
+            var mappedRoom = _mapper.Map<RoomGetDto>(room);
+
+            return Ok(mappedRoom);
+        }
+
+        [HttpPost]
+        [Route("{hotelId}/rooms")]
+        public async Task<IActionResult> AddHotelRoom([FromBody] RoomPostPutDto newRoom, int hotelId)
+        {
+            var room = _mapper.Map<Room>(newRoom);
+            //Get the hotel using the id and include the rooms.
+            var hotel = await _ctx.Hotels.Include(h => h.Rooms).FirstOrDefaultAsync(h => h.HotelId == hotelId);
+            //Add the new room to the rooms
+            hotel.Rooms.Add(room);
+            //Save to db
+            await _ctx.SaveChangesAsync();
+
+            var mappedRoom = _mapper.Map<RoomGetDto>(room);
+
+            return CreatedAtAction(nameof(GetHotelRoomById),
+                new { hotelId = hotelId, roomId = mappedRoom.RoomId }, 
+                mappedRoom);
+        }
+
+        [HttpPut]
+        [Route("{hotelId}/rooms/{roomId}")]
+        public async Task<IActionResult> UpdateHotelRoom(int hotelId, int roomId, [FromBody] RoomPostPutDto updatedRoom)
+        {
+            var toUpdate = _mapper.Map<Room>(updatedRoom);
+            toUpdate.RoomId = roomId;
+            toUpdate.HotelId = hotelId;
+
+            _ctx.Rooms.Update(toUpdate);
+            await _ctx.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        [HttpDelete]
+        [Route("{hotelId}/rooms/{roomId}")]
+        public async Task<IActionResult> RemoveRoomFromHotel(int hotelId, int roomId)
+        {
+            var room = await _ctx.Rooms.FirstOrDefaultAsync(r => r.RoomId == roomId && r.HotelId == hotelId);
+
+            if (room == null)
+            {
+                return NotFound("Room not found");
+            }
+
+            _ctx.Rooms.Remove(room);
+            await _ctx.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
