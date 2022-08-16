@@ -1,4 +1,6 @@
 using HotelsBooking.Dal;
+using HotelsBooking.Dal.Repositories;
+using HotelsBooking.Domain.Abstractions.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +36,8 @@ namespace HotelsBooking.Api
             services.AddDbContext<DataContext>(options => { options.UseSqlServer(connString);});
             //Automapper
             services.AddAutoMapper(typeof(Startup));
+            //Implement Repository
+            services.AddScoped<IHotelsRepository, HotelsRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
