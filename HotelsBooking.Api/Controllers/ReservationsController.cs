@@ -3,6 +3,7 @@ using HotelsBooking.Api.Dtos;
 using HotelsBooking.Domain.Abstractions.Services;
 using HotelsBooking.Domain.Models;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace HotelsBooking.Api.Controllers
@@ -24,7 +25,7 @@ namespace HotelsBooking.Api.Controllers
         public async Task<IActionResult> MakeReservation([FromBody] ReservationPutPostDto reservationDto)
         {
             var reservation = _mapper.Map<Reservation>(reservationDto);
-            var result = await _reservationService.MakeReservation(reservation);
+            var result = await _reservationService.MakeReservationAsync(reservation);
 
             if(result == null)
             {
@@ -33,6 +34,14 @@ namespace HotelsBooking.Api.Controllers
 
             var mapped = _mapper.Map<ReservationGetDto>(result);
 
+            return Ok(mapped);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllReservations()
+        {
+            var reservations = await _reservationService.GetAllReservationsAsync();
+            var mapped = _mapper.Map<List<ReservationGetDto>>(reservations);
             return Ok(mapped);
         }
     }

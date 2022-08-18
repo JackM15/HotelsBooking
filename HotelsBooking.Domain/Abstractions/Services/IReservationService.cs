@@ -9,6 +9,7 @@ namespace HotelsBooking.Domain.Abstractions.Services
 {
     public interface IReservationService
     {
-        Task<Reservation> MakeReservation(Reservation reservation);
+        Task<Reservation> MakeReservationAsync(Reservation reservation);
+        Task<List<Reservation>> GetAllReservationsAsync();
     }
 }
