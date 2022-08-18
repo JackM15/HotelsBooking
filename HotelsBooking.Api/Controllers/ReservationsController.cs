@@ -57,5 +57,16 @@ namespace HotelsBooking.Api.Controllers
 
             return Ok(mapped);
         }
+
+        [HttpDelete]
+        [Route("{reservationId}")]
+        public async Task<IActionResult> CancelReservation(int reservationId)
+        {
+            var deleted = await _reservationService.DeleteReservationAsync(reservationId);
+
+            if (deleted == null) return NotFound();
+
+            return NoContent();
+        }
     }
 }

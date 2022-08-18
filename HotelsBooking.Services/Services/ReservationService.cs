@@ -22,6 +22,19 @@ namespace HotelsBooking.Services.Services
             this._ctx = ctx;
         }
 
+        public async Task<Reservation> DeleteReservationAsync(int reservationId)
+        {
+            var reservation = await _ctx.Reservations.FirstOrDefaultAsync(r => r.ReservationId == reservationId);
+
+            if (reservation != null)
+            {
+                _ctx.Reservations.Remove(reservation);
+            }
+
+            await _ctx.SaveChangesAsync();
+            return reservation;
+        }
+
         public async Task<List<Reservation>> GetAllReservationsAsync()
         {
             return await _ctx.Reservations.Include(r => r.Hotel).Include(r => r.Room).ToListAsync();

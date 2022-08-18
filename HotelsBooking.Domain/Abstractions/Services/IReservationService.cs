@@ -12,5 +12,6 @@ namespace HotelsBooking.Domain.Abstractions.Services
         Task<Reservation> MakeReservationAsync(Reservation reservation);
         Task<List<Reservation>> GetAllReservationsAsync();
         Task<Reservation> GetReservationByIdAsync(int reservationId);
+        Task<Reservation> DeleteReservationAsync(int reservationId);
     }
 }
