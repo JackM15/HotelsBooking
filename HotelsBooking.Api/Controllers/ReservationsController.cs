@@ -44,5 +44,18 @@ namespace HotelsBooking.Api.Controllers
             var mapped = _mapper.Map<List<ReservationGetDto>>(reservations);
             return Ok(mapped);
         }
+
+        [HttpGet]
+        [Route("{reservationId}")]
+        public async Task<IActionResult> GetReservationById(int reservationId)
+        {
+            var reservation = await _reservationService.GetReservationByIdAsync(reservationId);
+
+            if (reservation == null) return NotFound($"No Reservation Found for the id: {reservationId}.");
+
+            var mapped = _mapper.Map<ReservationGetDto>(reservation);
+
+            return Ok(mapped);
+        }
     }
 }

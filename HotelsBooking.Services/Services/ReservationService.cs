@@ -27,6 +27,14 @@ namespace HotelsBooking.Services.Services
             return await _ctx.Reservations.Include(r => r.Hotel).Include(r => r.Room).ToListAsync();
         }
 
+        public async Task<Reservation> GetReservationByIdAsync(int reservationId)
+        {
+            return await _ctx.Reservations
+                .Include(r => r.Hotel)
+                .Include(r => r.Room)
+                .FirstOrDefaultAsync(r => r.ReservationId == reservationId);
+        }
+
         public async Task<Reservation> MakeReservationAsync(Reservation reservation)
         {
 
